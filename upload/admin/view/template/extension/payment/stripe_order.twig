@@ -1,0 +1,104 @@
+<h2>Stripe Charge</h2>
+<div class="alert alert-success" id="sagepay_direct_transaction_msg" style="display:none;"></div>
+<table class="table table-striped table-bordered">
+  <tr>
+    <td>Link</td>
+    <td><a class="btn btn-info btn-xs" href="https://dashboard.stripe.com/{{stripe_environment}}/payments/{{charge.id}}">Stripe charge</a></td>
+  </tr>
+
+  <tr>
+    <td>Fee</td>
+    <td>{{transaction.fee / 100}} {{transaction.currency}}</td>
+  </tr>
+  <tr>
+      <td>Net</td>
+      <td>{{transaction.net / 100}} {{transaction.currency}}</td>
+  </tr>
+  <tr>
+    <td>Refunded</td>
+    <td>
+        {% if charge.amount_refunded == charge.amount %}
+          <span class="label label-warning">Yes</span>
+        {% elseif charge.amount_refunded > 0 %}
+          <span class="label label-success">Partial</span>
+        {% else %}
+          <span class="label label-info">No</span>
+        {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td>Refund</td>
+    <td>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="input-refund-amount" value="{{charge.amount - charge.amount_refunded / 100}}">
+                  <span class="input-group-addon">{{charge.currency}}</span>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <a class="btn btn-primary" id="button-refund" style="display:block">
+                    <i class="fa fa-circle-o-notch fa-spin fa-lg" id="img-loading-refund" style="display:none;"></i>
+                    {{button_refund}}
+                </a>
+            </div>
+        </div>
+    </td>
+  </tr>
+  <tr>
+      <td>Refunds</td>
+      <td>
+          <table class="table table-striped table-bordered" id="stripe_refunds_table">
+                  <thead>
+                    <tr>
+                      <td class="text-left"><strong>Amount</strong></td>
+                      <td class="text-left"><strong>Date</strong></td>
+                      <td class="text-left"><strong>User</strong></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for refund in charge.refunds.data %}
+                    <tr>
+                      <td class="text-left">{{refund.amount / 100}} {{refund.currency}}</td>
+                      <td class="text-left">{{created|date(datetime_format)}}</td>
+                      <td class="text-left">
+                        {% if refund.metadata.opencart_user_username %}
+                          {{refund.metadata.opencart_user_username}}
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+      </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  $("#button-refund").click(function() {
+        if (confirm('{{text_confirm_refund}}')) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                data: {'order_id': {{order_id}}, 'amount': $('#input-refund-amount').val() },
+                url: 'index.php?route=extension/payment/stripe/refund&token={{token}}',
+                beforeSend: function() {
+                    $('#button-refund').prop('disabled', true);
+                    $('#img-loading-refund').show();
+                },
+                success: function(data) {
+                    if (data.error == false) {
+                      var $table = $('#stripe_refunds_table').find('tbody');
+                      $table.prepend('<tr><td class="text-left">'+$('#input-refund-amount').val()+'</td><td>now</td><td>you</td></tr>');
+                    }
+                    if (data.error == true) {
+                        alert(data.msg);
+                    }
+
+                    $('#button-refund').prop('disabled', false);
+                    $('#img-loading-refund').hide();
+                }
+            });
+        }
+    });
+</script>
