@@ -1,6 +1,7 @@
 <?php
 class ModelExtensionPaymentStripe extends Model {
 	public function install() {
+		$this->log('Installing module');
 		$this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "stripe_order` (
 			`stripe_order_id` varchar(255) NOT NULL,
 			`order_id` int(11) NOT NULL DEFAULT '0',
@@ -18,7 +19,6 @@ class ModelExtensionPaymentStripe extends Model {
 			  `environment` varchar(5) NOT NULL DEFAULT 'test',
 			  PRIMARY KEY (`stripe_card_id`)
 			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
-
 		$this->db->query("
 			CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "stripe_customer` (
 			  `customer_id` INT(11) NOT NULL,
@@ -31,6 +31,7 @@ class ModelExtensionPaymentStripe extends Model {
 	public function uninstall() {
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "stripe_order`");
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "stripe_card`");
+		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "stripe_customer`");
 
 		$this->log('Module uninstalled');
 	}
@@ -47,10 +48,10 @@ class ModelExtensionPaymentStripe extends Model {
 	}
 
 	public function log($data) {
-		if ($this->config->has('payment_stripe_logging') && $this->config->get('payment_stripe_logging')) {
+		// if ($this->config->has('payment_stripe_logging') && $this->config->get('payment_stripe_logging')) {
 			$log = new Log('stripe.log');
 
 			$log->write($data);
-		}
+		// }
 	}
 }
