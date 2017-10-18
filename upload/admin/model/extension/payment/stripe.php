@@ -47,7 +47,7 @@ class ModelExtensionPaymentStripe extends Model {
 	}
 
 	public function log($data) {
-		if ($this->config->has('stripe_logging') && $this->config->get('stripe_logging')) {
+		if ($this->config->has('stripe_logging') && $this->config->get('payment_stripe_logging')) {
 			$log = new Log('stripe.log');
 
 			$log->write($data);
