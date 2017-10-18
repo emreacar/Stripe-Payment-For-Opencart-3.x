@@ -80,7 +80,7 @@
                     {% if stripe_environment == 'live' %}
                     <option value="live" selected="selected">{{text_live}}</option>
                     <option value="test">{{text_test}}</option>
-                    {% else if stripe_environment == 'test' %}
+                    {% elseif stripe_environment == 'test' %}
                     <option value="live">{{text_live}}</option>
                     <option value="test" selected="selected">{{text_test}}</option>
                     {% else %}
