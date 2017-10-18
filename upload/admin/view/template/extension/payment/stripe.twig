@@ -77,16 +77,15 @@
                 </label>
                 <div class="col-sm-10">
                   <select name="payment_stripe_environment" id="input-stripe-environment" class="form-control">
-                    {% if stripe_environment == 'live '%}
+                    {% if stripe_environment == 'live' %}
                     <option value="live" selected="selected">{{text_live}}</option>
+                    <option value="test">{{text_test}}</option>
+                    {% else if stripe_environment == 'test' %}
+                    <option value="live">{{text_live}}</option>
+                    <option value="test" selected="selected">{{text_test}}</option>
                     {% else %}
                     <option value="live">{{text_live}}</option>
-                    {% endif %}
-
-                    {% if stripe_environment == 'test '%}
                     <option value="test">{{text_test}}</option>
-                    {% else %}
-                    <option value="test" selected="selected">{{text_test}}</option>
                     {% endif %}
                   </select>
                 </div>
