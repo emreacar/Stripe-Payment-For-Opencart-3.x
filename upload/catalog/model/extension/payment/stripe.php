@@ -12,7 +12,7 @@ class ModelExtensionPaymentStripe extends Model {
 				'code'       => 'stripe',
 				'title'      => $this->language->get('text_title'),
 				'terms'      => '',
-				'sort_order' => $this->config->get('stripe_sort_order')
+				'sort_order' => $this->config->get('payment_stripe_sort_order')
 			);
 		}
 
