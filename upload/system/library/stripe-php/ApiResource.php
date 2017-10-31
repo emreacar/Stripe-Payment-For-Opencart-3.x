@@ -93,14 +93,13 @@ abstract class ApiResource extends StripeObject
         return static::resourceUrl($this['id']);
     }
 
-    private static function _validateParams($params = null)
+    protected static function _validateParams($params = null)
     {
         if ($params && !is_array($params)) {
             $message = "You must pass an array as the first argument to Stripe API "
                . "method calls.  (HINT: an example call to create a charge "
                . "would be: \"Stripe\\Charge::create(array('amount' => 100, "
-               . "'currency' => 'usd', 'card' => array('number' => "
-               . "4242424242424242, 'exp_month' => 5, 'exp_year' => 2015)))\")";
+               . "'currency' => 'usd', 'source' => 'tok_1234'))\")";
             throw new Error\Api($message);
         }
     }
@@ -154,7 +153,6 @@ abstract class ApiResource extends StripeObject
     protected static function _create($params = null, $options = null)
     {
         self::_validateParams($params);
-        $base = static::baseUrl();
         $url = static::classUrl();
 
         list($response, $opts) = static::_staticRequest('post', $url, $params, $options);
@@ -173,7 +171,6 @@ abstract class ApiResource extends StripeObject
     protected static function _update($id, $params = null, $options = null)
     {
         self::_validateParams($params);
-        $base = static::baseUrl();
         $url = static::resourceUrl($id);
 
         list($response, $opts) = static::_staticRequest('post', $url, $params, $options);
@@ -201,5 +198,109 @@ abstract class ApiResource extends StripeObject
         list($response, $opts) = $this->_request('delete', $url, $params, $options);
         $this->refreshFrom($response, $opts);
         return $this;
+    }
+
+    /**
+     * @param string $method
+     * @param string $url
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return StripeObject
+     */
+    protected static function _nestedResourceOperation($method, $url, $params = null, $options = null)
+    {
+        self::_validateParams($params);
+
+        list($response, $opts) = static::_staticRequest($method, $url, $params, $options);
+        $obj = Util\Util::convertToStripeObject($response->json, $opts);
+        $obj->setLastResponse($response);
+        return $obj;
+    }
+
+    /**
+     * @param string $id
+     * @param string $nestedPath
+     * @param string|null $nestedId
+     *
+     * @return string
+     */
+    protected static function _nestedResourceUrl($id, $nestedPath, $nestedId = null)
+    {
+        $url = static::resourceUrl($id) . $nestedPath;
+        if ($nestedId !== null) {
+            $url .= "/$nestedId";
+        }
+        return $url;
+    }
+
+    /**
+     * @param string $id
+     * @param string $nestedPath
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return StripeObject
+     */
+    protected static function _createNestedResource($id, $nestedPath, $params = null, $options = null)
+    {
+        $url = static::_nestedResourceUrl($id, $nestedPath);
+        return self::_nestedResourceOperation('post', $url, $params, $options);
+    }
+
+    /**
+     * @param string $id
+     * @param string $nestedPath
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return StripeObject
+     */
+    protected static function _retrieveNestedResource($id, $nestedPath, $nestedId, $params = null, $options = null)
+    {
+        $url = static::_nestedResourceUrl($id, $nestedPath, $nestedId);
+        return self::_nestedResourceOperation('get', $url, $params, $options);
+    }
+
+    /**
+     * @param string $id
+     * @param string $nestedPath
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return StripeObject
+     */
+    protected static function _updateNestedResource($id, $nestedPath, $nestedId, $params = null, $options = null)
+    {
+        $url = static::_nestedResourceUrl($id, $nestedPath, $nestedId);
+        return self::_nestedResourceOperation('post', $url, $params, $options);
+    }
+
+    /**
+     * @param string $id
+     * @param string $nestedPath
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return StripeObject
+     */
+    protected static function _deleteNestedResource($id, $nestedPath, $nestedId, $params = null, $options = null)
+    {
+        $url = static::_nestedResourceUrl($id, $nestedPath, $nestedId);
+        return self::_nestedResourceOperation('delete', $url, $params, $options);
+    }
+
+    /**
+     * @param string $id
+     * @param string $nestedPath
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return StripeObject
+     */
+    protected static function _allNestedResources($id, $nestedPath, $params = null, $options = null)
+    {
+        $url = static::_nestedResourceUrl($id, $nestedPath);
+        return self::_nestedResourceOperation('get', $url, $params, $options);
     }
 }

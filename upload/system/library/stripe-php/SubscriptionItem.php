@@ -3,18 +3,29 @@
 namespace Stripe;
 
 /**
- * Class InvoiceItem
+ * Class SubscriptionItem
  *
  * @package Stripe
  */
-class InvoiceItem extends ApiResource
+class SubscriptionItem extends ApiResource
 {
     /**
-     * @param array|string $id The ID of the invoice item to retrieve, or an
-     *     options array containing an `id` key.
+     * This is a special case because the subscription items endpoint has an
+     *    underscore in it. The parent `className` function strips underscores.
+     *
+     * @return string The name of the class.
+     */
+    public static function className()
+    {
+        return 'subscription_item';
+    }
+
+    /**
+     * @param array|string $id The ID of the subscription item to retrieve, or
+     *     an options array containing an `id` key.
      * @param array|string|null $opts
      *
-     * @return InvoiceItem
+     * @return SubscriptionItem
      */
     public static function retrieve($id, $opts = null)
     {
@@ -25,7 +36,7 @@ class InvoiceItem extends ApiResource
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return Collection of InvoiceItems
+     * @return Collection of SubscriptionItems
      */
     public static function all($params = null, $opts = null)
     {
@@ -36,7 +47,7 @@ class InvoiceItem extends ApiResource
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return InvoiceItem The created invoice item.
+     * @return SubscriptionItem The created subscription item.
      */
     public static function create($params = null, $opts = null)
     {
@@ -44,11 +55,11 @@ class InvoiceItem extends ApiResource
     }
 
     /**
-     * @param string $id The ID of the invoice item to update.
+     * @param string $id The ID of the subscription item to update.
      * @param array|null $params
      * @param array|string|null $options
      *
-     * @return InvoiceItem The updated invoice item.
+     * @return SubscriptionItem The updated subscription item.
      */
     public static function update($id, $params = null, $options = null)
     {
@@ -58,7 +69,7 @@ class InvoiceItem extends ApiResource
     /**
      * @param array|string|null $opts
      *
-     * @return InvoiceItem The saved invoice item.
+     * @return SubscriptionItem The saved subscription item.
      */
     public function save($opts = null)
     {
@@ -69,7 +80,7 @@ class InvoiceItem extends ApiResource
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return InvoiceItem The deleted invoice item.
+     * @return SubscriptionItem The deleted subscription item.
      */
     public function delete($params = null, $opts = null)
     {

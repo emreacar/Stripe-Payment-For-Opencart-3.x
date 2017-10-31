@@ -3,40 +3,39 @@
 namespace Stripe;
 
 /**
- * Class OrderReturn
+ * Class ExchangeRate
  *
  * @package Stripe
  */
-class OrderReturn extends ApiResource
+class ExchangeRate extends ApiResource
 {
     /**
-     * This is a special case because the order returns endpoint has an
+     * This is a special case because the exchange rates endpoint has an
      *    underscore in it. The parent `className` function strips underscores.
      *
      * @return string The name of the class.
      */
     public static function className()
     {
-        return 'order_return';
+        return 'exchange_rate';
     }
 
     /**
-     * @param array|string $id The ID of the order return to retrieve, or an
-     *     options array containing an `id` field.
+     * @param array|string $currency
      * @param array|string|null $opts
      *
-     * @return Order
+     * @return ExchangeRate
      */
-    public static function retrieve($id, $opts = null)
+    public static function retrieve($currency, $opts = null)
     {
-        return self::_retrieve($id, $opts);
+        return self::_retrieve($currency, $opts);
     }
 
     /**
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return Collection of OrderReturns
+     * @return ExchangeRate
      */
     public static function all($params = null, $opts = null)
     {

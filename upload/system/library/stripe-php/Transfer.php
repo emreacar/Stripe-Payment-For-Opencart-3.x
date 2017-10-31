@@ -9,35 +9,27 @@ namespace Stripe;
  * @property string $object
  * @property int $amount
  * @property int $amount_reversed
- * @property mixed $application_fee
  * @property string $balance_transaction
  * @property int $created
  * @property string $currency
  * @property int $date
- * @property mixed $description
  * @property mixed $destination
  * @property mixed $destination_payment
- * @property mixed $failure_code
- * @property mixed $failure_message
- * @property mixed $fraud_details
- * @property mixed $invoice
  * @property bool $livemode
  * @property mixed $metadata
- * @property mixed $recipient
  * @property mixed $reversals
  * @property bool $reversed
  * @property mixed $source_transaction
- * @property string $source_type
- * @property mixed $statement_descriptor
- * @property string $status
- * @property string $type
  *
  * @package Stripe
  */
 class Transfer extends ApiResource
 {
+    const PATH_REVERSALS = '/reversals';
+
     /**
-     * @param string $id The ID of the transfer to retrieve.
+     * @param array|string $id The ID of the transfer to retrieve, or an
+     *     options array containing an `id` key.
      * @param array|string|null $opts
      *
      * @return Transfer
@@ -111,5 +103,55 @@ class Transfer extends ApiResource
     public function save($opts = null)
     {
         return $this->_save($opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer on which to create the reversal.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function createReversal($id, $params = null, $opts = null)
+    {
+        return self::_createNestedResource($id, static::PATH_REVERSALS, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer to which the reversal belongs.
+     * @param array|null $reversalId The ID of the reversal to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function retrieveReversal($id, $reversalId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_REVERSALS, $reversalId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer to which the reversal belongs.
+     * @param array|null $reversalId The ID of the reversal to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function updateReversal($id, $reversalId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_REVERSALS, $reversalId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer on which to retrieve the reversals.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function allReversals($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_REVERSALS, $params, $opts);
     }
 }
