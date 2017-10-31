@@ -54,7 +54,7 @@ class ControllerExtensionPaymentStripe extends Controller {
 
 			$stripe_customer_id = '';
 			$stripe_charge_parameters = array(
-				'amount' => $order_info['total'] * 100,
+				'amount' => round($order_info['total'] * 100),
 				'currency' => $this->config->get('payment_stripe_currency'),
 				'metadata' => array(
 					'orderId' => $this->session->data['order_id']
