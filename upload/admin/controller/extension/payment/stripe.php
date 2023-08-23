@@ -179,7 +179,7 @@ class ControllerExtensionPaymentStripe extends Controller {
 	}
 
 	public function install() {
-		if ($this->user->hasPermission('modify', 'extension/extension')) {
+		if ($this->user->hasPermission('modify', 'extension/payment/stripe')) {
 			$this->load->model('extension/payment/stripe');
 
 			$this->model_extension_payment_stripe->install();
@@ -187,7 +187,7 @@ class ControllerExtensionPaymentStripe extends Controller {
 	}
 
 	public function uninstall() {
-		if ($this->user->hasPermission('modify', 'extension/extension')) {
+		if ($this->user->hasPermission('modify', 'extension/payment/stripe')) {
 			$this->load->model('extension/payment/stripe');
 
 			$this->model_extension_payment_stripe->uninstall();
